@@ -1,0 +1,24 @@
+databases:
+  - name: betak-db
+    plan: free
+    databaseName: betak
+    user: betak_user
+
+services:
+  - type: web
+    name: betak-api
+    plan: free
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        value: betak_production_secure_jwt_key_2026
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DATABASE_URL
+        fromDatabase:
+          name: betak-db
+          property: connectionString
