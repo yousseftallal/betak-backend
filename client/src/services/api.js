@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api/v1/admin',
+  baseURL: '/api/v1/admin',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -41,7 +41,7 @@ export const authService = {
     // For simplicity, we can try public login if admin path fails or have a switcher
     // But better approach: Let's unify or create separate method
     // Current setup forces admin path. Let's try to detect or use robust path.
-    
+
     try {
       // Try Admin Login
       const response = await api.post('/auth/login', { email, password });
@@ -51,21 +51,25 @@ export const authService = {
         return { ...response.data, role: 'admin' };
       }
     } catch (error) {
-       // If admin login fails (401/404), try public user login
-       // We need a separate axios instance or absolute URL because 'api' base is /admin
-       const publicResponse = await axios.post('http://localhost:3000/api/v1/auth/login', { email, password });
-       if (publicResponse.data.data.tokens.accessToken) {
-         localStorage.setItem('token', publicResponse.data.data.tokens.accessToken);
-         localStorage.setItem('user', JSON.stringify(publicResponse.data.data.user));
-         return { ...publicResponse.data, role: 'user' };
-       }
-       throw error;
+      // If admin login fails (401/404), try public user login
+      // First verify credentials via public auth
+      const publicResponse = await axios.post('/api/v1/auth/login', { email, password });
+      if (publicResponse.data.data.tokens.accessToken) {
+        localStorage.setItem('token', publicResponse.data.data.tokens.accessToken);
+        localStorage.setItem('user', JSON.stringify(publicResponse.data.data.user));
+        return { ...publicResponse.data, role: 'user' };
+      }
+      throw error;
     }
   },
-  
+
   register: async (data) => {
-      const response = await axios.post('http://localhost:3000/api/v1/auth/register', data);
+    try {
+      const response = await axios.post('/api/v1/auth/register', data);
       return response.data;
+    } catch (error) {
+      throw error;
+    }
   },
 
   logout: () => {
@@ -78,49 +82,68 @@ export const authService = {
 };
 
 export const interactionService = {
-    toggleLike: async (videoId) => {
-        // We need auth token. Let's use the 'api' instance but with modified url or just manual axios with header
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`http://localhost:3000/api/v1/interact/like/${videoId}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    },
-    getLikeStatus: async (videoId) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/v1/interact/status/${videoId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    },
-    toggleFollow: async (username) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`http://localhost:3000/api/v1/interact/follow/${username}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    },
-    getFollowStatus: async (username) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/v1/interact/follow-status/${username}`, {
-             headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    },
-    
-    // Comments
-    listComments: async (videoId) => {
-        const response = await axios.get(`http://localhost:3000/api/v1/interact/comments/${videoId}`);
-        return response.data;
-    },
-    
-    addComment: async (videoId, content) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`http://localhost:3000/api/v1/interact/comments/${videoId}`, { content }, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
+  toggleLike: async (videoId) => {
+    // We need auth token. Let's use the 'api' instance but with modified url or just manual axios with header
+    try {
+      const response = await axios.post(`/api/v1/interact/like/${videoId}`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
     }
+  },
+  getLikeStatus: async (videoId) => {
+    try {
+      const response = await axios.get(`/api/v1/interact/status/${videoId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  toggleFollow: async (username) => {
+    try {
+      const response = await axios.post(`/api/v1/interact/follow/${username}`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getFollowStatus: async (username) => {
+    try {
+      const response = await axios.get(`/api/v1/interact/follow-status/${username}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Comments
+  listComments: async (videoId) => {
+    try {
+      const response = await axios.get(`/api/v1/interact/comments/${videoId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  addComment: async (videoId, content) => {
+    try {
+      const response = await axios.post(`/api/v1/interact/comments/${videoId}`, { content }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 export default api;

@@ -21,7 +21,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/profile/${username}`);
+            const response = await axios.get(`/api/v1/profile/${username}`);
             if (response.data.success) {
                 setProfile(response.data.data);
             }

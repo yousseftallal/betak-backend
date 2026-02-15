@@ -206,7 +206,7 @@ export default function SettingsPage() {
                                         if (res.success && res.data.downloadUrl) {
                                             toast.success('Backup ready! Downloading...', { id: toastId });
                                             // Trigger download
-                                            window.open(`http://localhost:3000${res.data.downloadUrl}`, '_blank');
+                                            window.open(`${res.data.downloadUrl}`, '_blank');
                                         } else {
                                             toast.error('Backup generated but no link returned', { id: toastId });
                                         }

@@ -35,16 +35,16 @@ export const videoService = {
 
   // Public User Upload
   uploadUserVideo: async (formData) => {
-      const token = localStorage.getItem('token');
-      // Import axios here or use a new instance if needed, but simplest is raw axios call
-      // to avoid /admin prefix
-      const axios = require('axios'); 
-      const response = await axios.post('http://localhost:3000/api/v1/videos/upload', formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-      return response.data;
+    const token = localStorage.getItem('token');
+    // Import axios here or use a new instance if needed, but simplest is raw axios call
+    // to avoid /admin prefix
+    const axios = require('axios');
+    const response = await axios.post('/api/v1/videos/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
   }
 };

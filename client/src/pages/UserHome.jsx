@@ -185,7 +185,7 @@ const UserHome = () => {
 
     const fetchFeed = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/feed');
+            const response = await axios.get('/api/v1/feed');
             if (response.data.success) {
                 setVideos(response.data.data);
             }
