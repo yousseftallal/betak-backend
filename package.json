@@ -12,7 +12,7 @@
     "seed:permissions": "node src/database/seeders/permissionSeeder.js",
     "seed:admin": "node src/database/seeders/adminSeeder.js",
     "seed:all": "npm run seed:roles && npm run seed:permissions && npm run seed:admin",
-    "postinstall": "cd client && npm install --legacy-peer-deps && npm run build",
+    "postinstall": "cd client && npm install --legacy-peer-deps --include=dev && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
