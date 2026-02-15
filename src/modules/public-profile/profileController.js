@@ -30,17 +30,29 @@ async function getProfile(req, res) {
 
     // Calculate aggregate stats
     const stats = {
-      followers: 0, // Mock for now
-      following: 0, // Mock for now
+      followers: 0,
+      following: 0,
       likes: user.videos.reduce((sum, vid) => sum + (vid.likes_count || 0), 0)
+    };
+
+    // Flatten response to match Android ProfileData model
+    const profileData = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      display_name: user.display_name, // Matches @SerializedName("display_name")
+      avatar_url: user.avatar_url,     // Matches @SerializedName("avatar_url")
+      bio: user.bio,
+      is_verified: false,              // Default
+      followers_count: stats.followers,
+      following_count: stats.following,
+      likes_count: stats.likes,
+      videos_count: user.videos.length
     };
 
     return res.json({
       success: true,
-      data: {
-        user,
-        stats
-      }
+      data: profileData
     });
 
   } catch (error) {

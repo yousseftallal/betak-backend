@@ -37,6 +37,7 @@ async function seedVerification() {
       ];
 
       const users = [];
+      const hashedPassword = await bcrypt.hash('User123!', 10);
 
       for (const userData of usersData) {
         // Check if user exists to avoid unique constraint error
@@ -44,7 +45,7 @@ async function seedVerification() {
         if (!user) {
           user = await User.create({
             ...userData,
-            password: 'User123!',
+            password_hash: hashedPassword,
             status: 'active',
             is_verified: false,
             followers_count: Math.floor(Math.random() * 100000)
